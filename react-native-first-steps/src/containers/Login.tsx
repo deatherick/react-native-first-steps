@@ -4,7 +4,11 @@ import {
   Text,
   View,
   TextInput,
-  TouchableOpacity
+  TouchableOpacity,
+  SafeAreaView,
+  StatusBar,
+  ScrollView,
+  useColorScheme
 } from "react-native";
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import { useSelector, useDispatch } from 'react-redux';
@@ -12,9 +16,11 @@ import { loginUser, userSelector, clearState, UserState } from "../redux/reducer
 import { store } from "../redux/store";
 import { Section } from "../components";
 import Toast from "react-native-root-toast";
+import { useNavigation } from "@react-navigation/native";
 
 export const Login = () : JSX.Element => {
   const dispatch = useDispatch();
+  const navigation = useNavigation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { isFetching, isSuccess, isError, errorMessage } = useSelector(userSelector);
@@ -34,39 +40,54 @@ export const Login = () : JSX.Element => {
 
     if (isSuccess) {
       dispatch(clearState());
+      navigation.navigate('Dashboard' as never)
     }
   }, [isError, isSuccess]);
 
-  return (
-    <React.Fragment>
-      <Section title="Sign in to your account" />
-      <View style={styles.container}>
-        <Text style={[{ color: Colors.black }]}>Username</Text>
-        <View style={styles.inputView}>
-          <TextInput
-            style={styles.TextInput}
-            placeholder="Username"
-            placeholderTextColor="#003f5c"
-            onChangeText={(email) => setEmail(email)} />
-        </View>
-        <Text style={[{ color: Colors.black }]}>Password</Text>
-        <View style={styles.inputView}>
-          <TextInput
-            style={styles.TextInput}
-            placeholder="Password"
-            placeholderTextColor="#003f5c"
-            secureTextEntry={true}
-            onChangeText={(password) => setPassword(password)} />
-        </View>
+  const isDarkMode = useColorScheme() === 'dark';
 
-        <TouchableOpacity style={styles.loginBtn} onPress={onSubmit}>
-          <Text style={[{ color: Colors.white }]}>Sign in</Text>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Text style={styles.signup_button}>Or Signup</Text>
-        </TouchableOpacity>
-      </View>
-    </React.Fragment>
+  const backgroundStyle = {
+    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+  };
+
+  return (
+    <SafeAreaView style={backgroundStyle}>
+      <StatusBar
+        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+        backgroundColor={backgroundStyle.backgroundColor}
+      />
+      <ScrollView
+        contentInsetAdjustmentBehavior="automatic"
+        style={backgroundStyle}>
+        <Section title="Sign in to your account" />
+        <View style={styles.container}>
+          <Text style={[{ color: Colors.black }]}>Username</Text>
+          <View style={styles.inputView}>
+            <TextInput
+              style={styles.TextInput}
+              placeholder="Username"
+              placeholderTextColor="#003f5c"
+              onChangeText={(email) => setEmail(email)} />
+          </View>
+          <Text style={[{ color: Colors.black }]}>Password</Text>
+          <View style={styles.inputView}>
+            <TextInput
+              style={styles.TextInput}
+              placeholder="Password"
+              placeholderTextColor="#003f5c"
+              secureTextEntry={true}
+              onChangeText={(password) => setPassword(password)} />
+          </View>
+
+          <TouchableOpacity style={styles.loginBtn} onPress={onSubmit}>
+            <Text style={[{ color: Colors.white }]}>Sign in</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('SignUp' as never)}>
+            <Text style={styles.signup_button}>Or Signup</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 const styles = StyleSheet.create({
