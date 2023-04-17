@@ -6,12 +6,9 @@ import {
   TextInput,
   TouchableOpacity
 } from "react-native";
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 
-import {
-  Colors
-} from 'react-native/Libraries/NewAppScreen';
-
-function Login() : JSX.Element  {
+export const Login : React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -89,5 +86,3 @@ const styles = StyleSheet.create({
     backgroundColor: "#4F46E5",
   },
 });
-
-export default Login;
