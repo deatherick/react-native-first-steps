@@ -11,7 +11,7 @@ type SectionProps = PropsWithChildren<{
     title: string;
 }>;
   
-export const Section: React.FC<SectionProps> = ({title, children}) => {
+export const Section = ({title, children}: SectionProps): JSX.Element => {
     const isDarkMode = useColorScheme() === 'dark';
     return (
       <View style={styles.sectionContainer}>

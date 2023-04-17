@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -7,40 +7,66 @@ import {
   TouchableOpacity
 } from "react-native";
 import { Colors } from 'react-native/Libraries/NewAppScreen';
+import { useSelector, useDispatch } from 'react-redux';
+import { loginUser, userSelector, clearState, UserState } from "../redux/reducers/user.reducer";
+import { store } from "../redux/store";
+import { Section } from "../components";
+import Toast from "react-native-root-toast";
 
-export const Login : React.FC = () => {
+export const Login = () : JSX.Element => {
+  const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { isFetching, isSuccess, isError, errorMessage } = useSelector(userSelector);
+
+  const onSubmit = () => {
+    store.dispatch(loginUser({email, password} as UserState));
+  };
+
+  useEffect(() => {
+    if (isError) {
+      Toast.show(errorMessage as string, {
+        duration: Toast.durations.LONG,
+        backgroundColor: 'red'
+      });
+      dispatch(clearState());
+    }
+
+    if (isSuccess) {
+      dispatch(clearState());
+    }
+  }, [isError, isSuccess]);
 
   return (
-    <View style={styles.container}>
-      <Text style={[{color: Colors.black}]}>Username</Text> 
-      <View style={styles.inputView}>
-        <TextInput
-          style={styles.TextInput}
-          placeholder="Username"
-          placeholderTextColor="#003f5c"
-          onChangeText={(email) => setEmail(email)}
-        /> 
-      </View> 
-      <Text style={[{color: Colors.black}]}>Password</Text> 
-      <View style={styles.inputView}>
-        <TextInput
-          style={styles.TextInput}
-          placeholder="Password"
-          placeholderTextColor="#003f5c"
-          secureTextEntry={true}
-          onChangeText={(password) => setPassword(password)}
-        /> 
-      </View> 
+    <React.Fragment>
+      <Section title="Sign in to your account" />
+      <View style={styles.container}>
+        <Text style={[{ color: Colors.black }]}>Username</Text>
+        <View style={styles.inputView}>
+          <TextInput
+            style={styles.TextInput}
+            placeholder="Username"
+            placeholderTextColor="#003f5c"
+            onChangeText={(email) => setEmail(email)} />
+        </View>
+        <Text style={[{ color: Colors.black }]}>Password</Text>
+        <View style={styles.inputView}>
+          <TextInput
+            style={styles.TextInput}
+            placeholder="Password"
+            placeholderTextColor="#003f5c"
+            secureTextEntry={true}
+            onChangeText={(password) => setPassword(password)} />
+        </View>
 
-      <TouchableOpacity style={styles.loginBtn}>
-      <Text style={[{color: Colors.white}]}>Sign in</Text> 
-      </TouchableOpacity> 
-      <TouchableOpacity>
-        <Text style={styles.signup_button}>Or Signup</Text> 
-      </TouchableOpacity> 
-    </View> 
+        <TouchableOpacity style={styles.loginBtn} onPress={onSubmit}>
+          <Text style={[{ color: Colors.white }]}>Sign in</Text>
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <Text style={styles.signup_button}>Or Signup</Text>
+        </TouchableOpacity>
+      </View>
+    </React.Fragment>
   );
 }
 const styles = StyleSheet.create({

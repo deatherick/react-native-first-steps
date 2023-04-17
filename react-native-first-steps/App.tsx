@@ -8,8 +8,9 @@ import {
 } from 'react-native';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import { Login } from './src/containers';
-import { Section } from './src/components';
-
+import { RootSiblingParent } from 'react-native-root-siblings';
+import { Provider } from 'react-redux';
+import { store } from './src/redux';
 
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
@@ -19,19 +20,21 @@ function App(): JSX.Element {
   };
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        {/* <Header /> */}
-        <Section title="Sign in to your account"></Section>
-        <Login /> 
-      </ScrollView>
-    </SafeAreaView>
+    <Provider store={store}>
+      <RootSiblingParent>
+        <SafeAreaView style={backgroundStyle}>
+          <StatusBar
+            barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+            backgroundColor={backgroundStyle.backgroundColor}
+          />
+          <ScrollView
+            contentInsetAdjustmentBehavior="automatic"
+            style={backgroundStyle}>
+            <Login /> 
+          </ScrollView>
+        </SafeAreaView>
+      </RootSiblingParent>
+    </Provider>
   );
 }
 
